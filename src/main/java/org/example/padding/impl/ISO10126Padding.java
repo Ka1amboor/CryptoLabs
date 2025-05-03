@@ -1,0 +1,27 @@
+package org.example.padding.impl;
+
+import org.example.interfaces.IPadding;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+public class ISO10126Padding implements IPadding {
+
+    @Override
+    public byte[] addPadding(byte[] block, int size) {
+        int n = block.length;
+        int lengthPadding = size - (block.length % size);
+        byte[] paddingBytes = new byte[lengthPadding];
+        new SecureRandom().nextBytes(paddingBytes);
+        paddingBytes[lengthPadding - 1] = (byte) lengthPadding;
+        byte[] result = new byte[n + lengthPadding];
+        System.arraycopy(block, 0, result, 0, n);
+        System.arraycopy(paddingBytes, 0, result, n, lengthPadding);
+        return result;
+    }
+
+    @Override
+    public byte[] removePadding(byte[] block) {
+        return Arrays.copyOf(block, block.length - block[block.length - 1]);
+    }
+}
